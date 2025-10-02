@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(req: NextRequest) {
@@ -41,8 +40,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -61,7 +60,7 @@ export async function POST(req: NextRequest) {
       select: { userId: true },
     })
 
-    if (!project || project.userId !== session.user.id) {
+    if (!project || project.userId !== userId) {
       return NextResponse.json(
         { error: "You can only add updates to your own projects" },
         { status: 403 }
@@ -74,7 +73,7 @@ export async function POST(req: NextRequest) {
         content,
         type: type || "update",
         projectId,
-        userId: session.user.id,
+        userId: userId,
       },
       include: {
         user: {
@@ -100,8 +99,8 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
+    const { userId } = await auth()
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -121,7 +120,7 @@ export async function DELETE(req: NextRequest) {
       select: { userId: true },
     })
 
-    if (!update || update.userId !== session.user.id) {
+    if (!update || update.userId !== userId) {
       return NextResponse.json(
         { error: "You can only delete your own updates" },
         { status: 403 }

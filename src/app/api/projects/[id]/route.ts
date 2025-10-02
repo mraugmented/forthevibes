@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/lib/auth"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(
@@ -8,7 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const { userId } = await auth()
     const { id: projectId } = await params
 
     const project = await prisma.project.findUnique({
@@ -28,15 +27,28 @@ export async function GET(
         _count: {
           select: {
             stars: true,
+            vibes: true,
+            comments: true,
           },
         },
-        stars: session?.user?.id
+        stars: userId
           ? {
               where: {
-                userId: session.user.id,
+                userId: userId,
               },
               select: {
                 id: true,
+              },
+            }
+          : false,
+        vibes: userId
+          ? {
+              where: {
+                userId: userId,
+              },
+              select: {
+                id: true,
+                type: true,
               },
             }
           : false,
@@ -50,11 +62,13 @@ export async function GET(
       )
     }
 
-    // Add isStarred field
+    // Add isStarred and userVibes fields
     const projectWithStarStatus = {
       ...project,
-      isStarred: session?.user?.id ? project.stars.length > 0 : false,
+      isStarred: userId ? project.stars.length > 0 : false,
+      userVibes: userId ? project.vibes.map((v: any) => v.type) : [],
       stars: undefined, // Remove the stars array from response
+      vibes: undefined, // Remove the vibes array from response
     }
 
     return NextResponse.json(projectWithStarStatus)
@@ -98,9 +112,9 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const { userId } = await auth()
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
@@ -123,7 +137,7 @@ export async function PUT(
       )
     }
 
-    if (existingProject.userId !== session.user.id) {
+    if (existingProject.userId !== userId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 403 }
@@ -183,9 +197,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const { userId } = await auth()
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
@@ -207,7 +221,7 @@ export async function DELETE(
       )
     }
 
-    if (existingProject.userId !== session.user.id) {
+    if (existingProject.userId !== userId) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 403 }

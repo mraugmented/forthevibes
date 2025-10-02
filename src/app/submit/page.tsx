@@ -15,6 +15,7 @@ export default function SubmitProject() {
   const { isLoaded, isSignedIn, user } = useUser()
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
   const [techStack, setTechStack] = useState<string[]>([])
   const [tags, setTags] = useState<string[]>([])
   const [currentTech, setCurrentTech] = useState("")
@@ -186,7 +187,11 @@ export default function SubmitProject() {
 
       if (response.ok) {
         const project = await response.json()
-        router.push(`/project/${project.id}`)
+        setShowSuccess(true)
+        // Wait for animation to play, then redirect
+        setTimeout(() => {
+          router.push(`/project/${project.id}`)
+        }, 2000)
       } else {
         const error = await response.json()
         alert(error.error || "Failed to submit project")
@@ -201,6 +206,37 @@ export default function SubmitProject() {
 
   return (
     <div className="min-h-screen py-12 px-4 relative overflow-hidden">
+      {/* Success Modal */}
+      {showSuccess && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center"
+        >
+          <motion.div
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", duration: 0.6 }}
+            className="glass rounded-3xl p-12 max-w-md text-center"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1, rotate: 360 }}
+              transition={{ delay: 0.2, type: "spring", duration: 0.8 }}
+              className="w-24 h-24 bg-gradient-to-r from-teal-400 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-6"
+            >
+              <Rocket className="w-12 h-12 text-white" />
+            </motion.div>
+            <h2 className="text-3xl font-bold font-playfair aurora-text mb-4">
+              Vibe Submitted! 🎉
+            </h2>
+            <p className="text-gray-700 text-lg">
+              Your project is now live! Redirecting you to your vibe...
+            </p>
+          </motion.div>
+        </motion.div>
+      )}
+
       {/* Aurora Background */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-teal-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" />
