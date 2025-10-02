@@ -69,41 +69,24 @@ export default function ProfilePage({ params }: { params: { username: string } }
 
   const fetchUserData = async () => {
     try {
-      // For now, we'll create a mock implementation since we haven't created the API endpoints yet
-      // In a real implementation, you would fetch from /api/users/[username]
-
-      // Mock user data - replace with actual API call
-      const mockUser: User = {
-        id: "1",
-        name: "Demo User",
-        username: params.username,
-        email: "demo@example.com",
-        image: "https://github.com/octocat.png",
-        bio: "Passionate developer building amazing projects for the vibes!",
-        githubUrl: `https://github.com/${params.username}`,
-        websiteUrl: "https://example.com",
-        createdAt: new Date("2024-01-01"),
-        _count: {
-          projects: 5,
-          stars: 23,
-          vibes: 127
-        },
-        vibes: {
-          fire: 32,
-          sparkle: 28,
-          rocket: 24,
-          inspired: 26,
-          "mind-blown": 17
-        }
+      // Fetch user data
+      const userResponse = await fetch(`/api/users/${params.username}`)
+      if (!userResponse.ok) {
+        setUser(null)
+        setLoading(false)
+        return
       }
+      const userData = await userResponse.json()
 
-      // Mock projects - replace with actual API call
-      const mockProjects: Project[] = []
+      // Fetch user's projects
+      const projectsResponse = await fetch(`/api/users/${params.username}/projects`)
+      const projectsData = await projectsResponse.json()
 
-      setUser(mockUser)
-      setProjects(mockProjects)
+      setUser(userData.user)
+      setProjects(projectsData.projects || [])
     } catch (error) {
       console.error("Error fetching user data:", error)
+      setUser(null)
     } finally {
       setLoading(false)
     }
