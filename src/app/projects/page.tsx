@@ -1,7 +1,5 @@
 "use client"
 
-export const dynamic = 'force-dynamic'
-
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
@@ -33,7 +31,7 @@ interface Project {
 }
 
 export default function ProjectsPage() {
-  const { data: session } = useSession()
+  const session = useSession?.()
   const searchParams = useSearchParams()
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
