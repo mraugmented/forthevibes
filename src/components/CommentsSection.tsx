@@ -129,7 +129,7 @@ export function CommentsSection({ projectId }: CommentsSectionProps) {
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Share your thoughts and feedback..."
-                className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:outline-none resize-none"
+                className="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-xl focus:border-purple-400 focus:outline-none resize-none text-gray-900 placeholder:text-gray-500"
                 rows={3}
               />
               <div className="flex justify-end mt-2">

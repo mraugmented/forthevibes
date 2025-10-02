@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { sortProjectsByTrending } from "@/lib/trending"
 
@@ -145,11 +145,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Ensure user exists in database
+    // Ensure user exists in database with Clerk data
+    const client = await clerkClient()
+    const clerkUser = await client.users.getUser(userId)
+
     await prisma.user.upsert({
       where: { id: userId },
-      update: {},
-      create: { id: userId },
+      update: {
+        name: clerkUser.fullName || clerkUser.username || null,
+        username: clerkUser.username || null,
+        email: clerkUser.emailAddresses[0]?.emailAddress || null,
+        image: clerkUser.imageUrl || null,
+      },
+      create: {
+        id: userId,
+        name: clerkUser.fullName || clerkUser.username || null,
+        username: clerkUser.username || null,
+        email: clerkUser.emailAddresses[0]?.emailAddress || null,
+        image: clerkUser.imageUrl || null,
+      },
     })
 
     const body = await request.json()

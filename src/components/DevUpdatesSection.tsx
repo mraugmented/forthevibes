@@ -195,8 +195,8 @@ export function DevUpdatesSection({
                       onClick={() => setFormData({ ...formData, type })}
                       className={`p-3 rounded-lg border-2 transition-all ${
                         formData.type === type
-                          ? "border-green-500 bg-green-50"
-                          : "border-gray-200 hover:border-gray-300"
+                          ? "border-green-500 bg-green-50 text-green-900"
+                          : "border-gray-200 hover:border-gray-300 bg-white text-gray-700"
                       }`}
                     >
                       <div className="flex items-center justify-center gap-2">
@@ -219,7 +219,7 @@ export function DevUpdatesSection({
                     setFormData({ ...formData, title: e.target.value })
                   }
                   placeholder="What's new?"
-                  className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:border-green-400 focus:outline-none"
+                  className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:border-green-400 focus:outline-none text-gray-900 placeholder:text-gray-500"
                 />
               </div>
 
@@ -233,7 +233,7 @@ export function DevUpdatesSection({
                     setFormData({ ...formData, content: e.target.value })
                   }
                   placeholder="Tell the community about this update..."
-                  className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:border-green-400 focus:outline-none resize-none"
+                  className="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:border-green-400 focus:outline-none resize-none text-gray-900 placeholder:text-gray-500"
                   rows={4}
                 />
               </div>

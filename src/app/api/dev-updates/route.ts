@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
+import { auth, clerkClient } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 
 export async function GET(req: NextRequest) {
@@ -66,6 +66,27 @@ export async function POST(req: NextRequest) {
         { status: 403 }
       )
     }
+
+    // Ensure user exists with Clerk data
+    const client = await clerkClient()
+    const clerkUser = await client.users.getUser(userId)
+
+    await prisma.user.upsert({
+      where: { id: userId },
+      update: {
+        name: clerkUser.fullName || clerkUser.username || null,
+        username: clerkUser.username || null,
+        email: clerkUser.emailAddresses[0]?.emailAddress || null,
+        image: clerkUser.imageUrl || null,
+      },
+      create: {
+        id: userId,
+        name: clerkUser.fullName || clerkUser.username || null,
+        username: clerkUser.username || null,
+        email: clerkUser.emailAddresses[0]?.emailAddress || null,
+        image: clerkUser.imageUrl || null,
+      },
+    })
 
     const update = await prisma.devUpdate.create({
       data: {
