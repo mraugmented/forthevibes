@@ -109,7 +109,7 @@ export function CommentsSection({ projectId }: CommentsSectionProps) {
       </div>
 
       {/* Comment Form */}
-      {session ? (
+      {user ? (
         <motion.form
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -117,10 +117,10 @@ export function CommentsSection({ projectId }: CommentsSectionProps) {
           className="mb-8"
         >
           <div className="flex gap-3">
-            {session.user.image && (
+            {user.imageUrl && (
               <img
-                src={session.user.image}
-                alt={session.user.name || ""}
+                src={user.imageUrl}
+                alt={user.fullName || user.username || ""}
                 className="w-10 h-10 rounded-full border-2 border-purple-300"
               />
             )}
