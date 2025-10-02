@@ -57,20 +57,22 @@ export function ProjectCard({ project, currentUserId, onStar }: ProjectCardProps
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
       {project.imageUrl && (
-        <div className="aspect-video w-full overflow-hidden">
+        <Link href={`/project/${project.id}`} className="block aspect-video w-full overflow-hidden">
           <img
             src={project.imageUrl}
             alt={project.title}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
-        </div>
+        </Link>
       )}
 
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">
-          <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">
-            {project.title}
-          </h3>
+          <Link href={`/project/${project.id}`} className="flex-1">
+            <h3 className="text-xl font-semibold text-gray-900 line-clamp-2 hover:text-teal-600 transition-colors">
+              {project.title}
+            </h3>
+          </Link>
           <div className="flex items-center space-x-2 ml-4">
             {currentUserId && (
               <Button
