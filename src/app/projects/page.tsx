@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, Suspense } from "react"
 import { useSession } from "next-auth/react"
 import { useSearchParams } from "next/navigation"
 import { ProjectCard } from "@/components/ProjectCard"
@@ -30,7 +30,7 @@ interface Project {
   isStarred?: boolean
 }
 
-export default function ProjectsPage() {
+function ProjectsContent() {
   const session = useSession?.()
   const searchParams = useSearchParams()
   const [projects, setProjects] = useState<Project[]>([])
@@ -270,5 +270,13 @@ export default function ProjectsPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function ProjectsPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-12">Loading...</div>}>
+      <ProjectsContent />
+    </Suspense>
   )
 }
