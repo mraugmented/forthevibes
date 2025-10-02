@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
+import { useUser } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -53,7 +53,7 @@ export default function ProjectDetailPage({
 }: {
   params: { id: string }
 }) {
-  const { data: session } = useSession()
+  const { user } = useUser()
   const router = useRouter()
   const [project, setProject] = useState<Project | null>(null)
   const [loading, setLoading] = useState(true)
@@ -178,7 +178,7 @@ export default function ProjectDetailPage({
                   </h1>
                   <VibeButtonEnhanced
                     projectId={project.id}
-                    currentUserId={session?.user?.id}
+                    currentUserId={user?.id}
                     initialVibes={vibesByType}
                     userVibes={project.userVibes || []}
                   />

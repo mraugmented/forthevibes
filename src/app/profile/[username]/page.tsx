@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from "react"
-import { useSession } from "next-auth/react"
+import { useUser } from "@clerk/nextjs"
 import { ProjectCard } from "@/components/ProjectCard"
 import { Button } from "@/components/ui/button"
 import { VibeStats } from "@/components/VibeStats"
@@ -57,7 +57,7 @@ interface Project {
 }
 
 export default function ProfilePage({ params }: { params: { username: string } }) {
-  const { data: session } = useSession()
+  const { user: currentUser } = useUser()
   const [user, setUser] = useState<User | null>(null)
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
@@ -110,7 +110,7 @@ export default function ProfilePage({ params }: { params: { username: string } }
   }
 
   const handleStar = async (projectId: string, isStarred: boolean) => {
-    if (!session?.user?.id) return
+    if (!currentUser?.id) return
 
     const method = isStarred ? "DELETE" : "POST"
     const response = await fetch(`/api/projects/${projectId}/star`, {
@@ -365,7 +365,7 @@ export default function ProfilePage({ params }: { params: { username: string } }
                   <ProjectCard
                     key={project.id}
                     project={project}
-                    currentUserId={session?.user?.id}
+                    currentUserId={currentUser?.id}
                     onStar={handleStar}
                   />
                 ))}
@@ -379,7 +379,7 @@ export default function ProfilePage({ params }: { params: { username: string } }
                   No projects yet
                 </h3>
                 <p className="text-gray-600">
-                  {session?.user?.id === user.id
+                  {currentUser?.id === user.id
                     ? "You haven't submitted any projects yet."
                     : `${user.name || user.username} hasn't submitted any projects yet.`}
                 </p>

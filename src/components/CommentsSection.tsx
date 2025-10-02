@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
+import { useUser } from "@clerk/nextjs"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { MessageCircle, Send, Trash2, Clock } from "lucide-react"
@@ -23,7 +23,7 @@ interface CommentsSectionProps {
 }
 
 export function CommentsSection({ projectId }: CommentsSectionProps) {
-  const { data: session } = useSession()
+  const { user } = useUser()
   const [comments, setComments] = useState<Comment[]>([])
   const [newComment, setNewComment] = useState("")
   const [loading, setLoading] = useState(true)
@@ -207,7 +207,7 @@ export function CommentsSection({ projectId }: CommentsSectionProps) {
                           {getTimeSince(comment.createdAt)}
                         </p>
                       </div>
-                      {session?.user?.id === comment.user.id && (
+                      {user?.id === comment.user.id && (
                         <Button
                           variant="ghost"
                           size="sm"

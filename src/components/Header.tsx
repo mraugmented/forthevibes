@@ -29,7 +29,7 @@ export function Header() {
               Browse Projects
             </Button>
           </Link>
-          <Link href="/trending">
+          <Link href="/?sort=trending">
             <Button variant="ghost">
               <TrendingUp className="w-4 h-4 mr-2" />
               Trending

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useSession } from "next-auth/react"
+import { useUser } from "@clerk/nextjs"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import {
@@ -39,7 +39,7 @@ export function DevUpdatesSection({
   projectId,
   projectOwnerId,
 }: DevUpdatesSectionProps) {
-  const { data: session } = useSession()
+  const { user } = useUser()
   const [updates, setUpdates] = useState<DevUpdate[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -50,7 +50,7 @@ export function DevUpdatesSection({
   })
   const [submitting, setSubmitting] = useState(false)
 
-  const isOwner = session?.user?.id === projectOwnerId
+  const isOwner = user?.id === projectOwnerId
 
   useEffect(() => {
     fetchUpdates()

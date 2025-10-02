@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, Suspense } from "react"
-import { useSession } from "next-auth/react"
+import { useUser } from "@clerk/nextjs"
 import { useSearchParams } from "next/navigation"
 import { ProjectCard } from "@/components/ProjectCard"
 import { Button } from "@/components/ui/button"
@@ -31,7 +31,7 @@ interface Project {
 }
 
 function ProjectsContent() {
-  const session = useSession?.()
+  const { user } = useUser()
   const searchParams = useSearchParams()
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
@@ -85,7 +85,7 @@ function ProjectsContent() {
   }
 
   const handleStar = async (projectId: string, isStarred: boolean) => {
-    if (!session?.user?.id) return
+    if (!user?.id) return
 
     const method = isStarred ? "DELETE" : "POST"
     const response = await fetch(`/api/projects/${projectId}/star`, {
@@ -223,7 +223,7 @@ function ProjectsContent() {
               <ProjectCard
                 key={project.id}
                 project={project}
-                currentUserId={session?.user?.id}
+                currentUserId={user?.id}
                 onStar={handleStar}
               />
             ))}
